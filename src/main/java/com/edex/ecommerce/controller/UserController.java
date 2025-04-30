@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.edex.ecommerce.dto.request.LoginData;
+import com.edex.ecommerce.dto.response.LoginResponse;
 import com.edex.ecommerce.model.User;
 import com.edex.ecommerce.repo.UserRepo;
 
@@ -77,13 +78,26 @@ public class UserController {
 
     // public User findByUsernameAndPassword(String username, String password);
     @PostMapping("/login")
-    public String login(@RequestBody LoginData dto){
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginData dto){
         User user = userRepo.findByUsernameAndPassword(dto.getUsername(), dto.getPassword());
+        /*
         if(user == null){
             return "Failed";
         }else{
             return "Success";
         }
+        */
+
+        LoginResponse res = new LoginResponse();
+        if(user == null){
+            res.setStatus(false);
+            res.setMessage("Login Failed");
+        }else{
+            res.setStatus(true);
+            res.setMessage("Login Success");
+        }
+        return ResponseEntity.ok().body(res);
+
     }
     @PostMapping("/update")
     public ResponseEntity<String> updateUser(@RequestBody User dto){
